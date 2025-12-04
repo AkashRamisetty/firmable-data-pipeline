@@ -43,7 +43,7 @@ dbt-core + dbt-postgres
 
 OpenAI GPT-4.1-mini for LLM-assisted matching (optional, small subset)
 
-3. Data Sources
+## 3. Data Sources
 3.1 Australian Business Register (ABR)
 
 Source: Bulk XML files (Public ABR extract).
@@ -117,7 +117,7 @@ raw_commoncrawl rows: 100,000
 
 stg_commoncrawl_companies rows: 100,000
 
-4. Database Schema (DDL)
+## 4. Database Schema (DDL)
 
 All DDL is located in:
 
@@ -189,7 +189,7 @@ CREATE INDEX idx_raw_commoncrawl_domain ON raw_commoncrawl(domain);
 CREATE INDEX idx_company_unified_abn ON company_unified(abn);
 CREATE INDEX idx_company_unified_domain ON company_unified(website_domain);
 
-5. dbt Models & Data Quality
+## 5. dbt Models & Data Quality
 5.1 Project layout
 
 dbt_project/firmable_dbt/dbt_project.yml
@@ -233,7 +233,7 @@ cd dbt_project/firmable_dbt
 dbt run --select stg_abr_entities stg_commoncrawl_companies
 dbt test
 
-6. Entity Matching Strategy
+## 6. Entity Matching Strategy
 
 Entity matching is implemented in:
 
@@ -280,7 +280,7 @@ low_threshold = 0 → in this demo, we treat all non-zero scores as ambiguous to
 
 In the real sample I used, the Common Crawl slice is dominated by IP-style hostnames (e.g. "167", "3", etc.), so name-only fuzzy matching does not find robust high-confidence pairs. In practice, I’d enrich the CC data with better company signals (page titles, schema.org org names, etc.).
 
-7. LLM-Assisted Matching (Key Requirement)
+## 7. LLM-Assisted Matching (Key Requirement)
 7.1 Motivation
 
 The assignment calls for:
@@ -390,7 +390,7 @@ LLM_MAX_REVIEWS = 10
 Even if there are 5,000 ambiguous pairs, at most 10 are sent to the LLM per run.
 Using gpt-4.1-mini, this keeps costs well under a few cents per run.
 
-8. Data Quality & Deduplication
+## 8. Data Quality & Deduplication
 
 Raw layer:
 
@@ -420,7 +420,7 @@ One unified company_id.
 
 Two source systems per match: "ABR" (ABN) and "COMMONCRAWL" (Common Crawl record ID).
 
-9. Setup & Running Instructions
+## 9. Setup & Running Instructions
 9.1 Prerequisites
 
 macOS (tested on Apple Silicon)
@@ -484,7 +484,7 @@ export OPENAI_MODEL="gpt-4.1-mini"
 
 python src/entity_matching.py
 
-10. Statistics Summary
+## 10. Statistics Summary
 
 From my latest run:
 
@@ -501,7 +501,7 @@ company_unified rows: 2
 
 company_source_link rows: 4 (2 source rows per unified company)
 
-11. Design Choices & Trade-offs
+## 11. Design Choices & Trade-offs
 
 Postgres + dbt
 Simple, transparent, and easy to run locally inside Docker. dbt handles SQL-heavy cleaning and quality checks; Postgres holds raw, staged, and unified layers.
@@ -521,13 +521,13 @@ Fuzzy matching (RapidFuzz) is fast and cheap for large volumes. LLMs are used on
 Sampling for laptop-friendly runs
 The full ABR dataset is ~20M rows. For this assignment on a personal laptop, I use SQL sampling (modulus filters) to keep matching runs fast while maintaining a realistic design that can scale.
 
-12. IDE Used
+## 12. IDE Used
 
 IDE: (e.g.) VS Code on macOS
 
 Environment: macOS on Apple Silicon (M4), Docker Desktop, Python 3.11 virtual environment, dbt-postgres.
 
-13. Future Improvements
+## 13. Future Improvements
 
 If productionised, I would:
 

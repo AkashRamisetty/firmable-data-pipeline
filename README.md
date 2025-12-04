@@ -20,17 +20,17 @@ The goal is to produce a unified view of companies in a `company_unified` table,
 
 ```mermaid
 flowchart LR
-    A[ABR Bulk XML (zips)] -->|Python: extract_abr_bulk.py| B[Postgres: raw_abr]
-    C[Common Crawl CC-MAIN-2025-13 index (gz)] -->|Python: extract_commoncrawl_ccindex.py| D[Postgres: raw_commoncrawl]
+    A[ABR Bulk XML (zips)] --> B[Postgres: raw_abr]
+    C[Common Crawl CC-MAIN-2025-13 index (gz)] --> D[Postgres: raw_commoncrawl]
 
-    B -->|dbt models| E[stg_abr_entities]
-    D -->|dbt models| F[stg_commoncrawl_companies]
+    B --> E[dbt: stg_abr_entities]
+    D --> F[dbt: stg_commoncrawl_companies]
 
-    E -->|Python: entity_matching.py<br>fuzzy + LLM| G[company_unified]
-    F -->|Python: entity_matching.py<br>fuzzy + LLM| G[company_unified]
+    E --> G[company_unified]
+    F --> G
 
     G --> H[company_source_link]
-```
+
 
 
 Tech stack
